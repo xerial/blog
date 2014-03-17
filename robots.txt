@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://xerial.github.io/blog/sitemap.xml 
+Sitemap: http://xerial.org/blog/sitemap.xml 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Leo's Chronicle]]></title>
-  <link href="http://xerial.github.io/blog/atom.xml" rel="self"/>
-  <link href="http://xerial.github.io/blog/"/>
-  <updated>2014-03-18T02:22:58+09:00</updated>
-  <id>http://xerial.github.io/blog/</id>
+  <title><![CDATA[eXerial]]></title>
+  <link href="http://xerial.org/blog/atom.xml" rel="self"/>
+  <link href="http://xerial.org/blog/"/>
+  <updated>2014-03-18T02:58:48+09:00</updated>
+  <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
     
