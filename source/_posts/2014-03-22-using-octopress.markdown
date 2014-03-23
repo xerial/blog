@@ -6,4 +6,7 @@ comments: true
 categories: 
 ---
 
+I have started to use Octopress for blogging:
+
 http://octopress.org/docs/setup/
+
