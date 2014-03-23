@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[eXerial]]></title>
-  <link href="http://xerial.org/blog/atom.xml" rel="self"/>
+  <title><![CDATA[Category: research | eXerial]]></title>
+  <link href="http://xerial.org/blog/blog/categories/research/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
   <updated>2014-03-23T16:30:24+09:00</updated>
   <id>http://xerial.org/blog/</id>
@@ -12,17 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Using Octopress]]></title>
-    <link href="http://xerial.org/blog/2014/03/22/using-octopress/"/>
-    <updated>2014-03-22T17:08:25+09:00</updated>
-    <id>http://xerial.org/blog/2014/03/22/using-octopress</id>
-    <content type="html"><![CDATA[<p>I have started to use Octopress for blogging:</p>
-
-<p><a href="http://octopress.org/docs/setup/">http://octopress.org/docs/setup/</a></p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[On Writing]]></title>

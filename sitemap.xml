@@ -1,16 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
+        <loc>http://xerial.org/blog/2014/01/13/on-writing/</loc>
+        <lastmod>2014-03-23T16:12:27+09:00</lastmod>
+    </url>
+    <url>
+        <loc>http://xerial.org/blog/2014/03/22/using-octopress/</loc>
+        <lastmod>2014-03-23T16:12:14+09:00</lastmod>
+    </url>
+    <url>
         <loc>http://xerial.org/blog/about/</loc>
         <lastmod>2014-03-18T02:16:12+09:00</lastmod>
     </url>
     <url>
-        <loc>http://xerial.org/blog/blog/archives/</loc>
-        <lastmod>2014-03-18T02:16:13+09:00</lastmod>
+        <loc>http://xerial.org/blog/archives/</loc>
+        <lastmod>2014-03-23T16:12:27+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/</loc>
-        <lastmod>2014-03-18T02:16:13+09:00</lastmod>
+        <lastmod>2014-03-23T16:12:27+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/robots.txt</loc>
