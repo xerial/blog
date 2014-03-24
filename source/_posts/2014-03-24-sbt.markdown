@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script generated pom.xml to customize Maven's default behaviour. To simplify the build process, I have started using sbt in Treasure Data. 
+I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml to customize Maven's default behaviour. To simplify this build process, I have started using sbt in Treasure Data. 
 
 [sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how to configure sbt and its standard usage.
 
@@ -24,7 +24,7 @@ $ brew install sbt
 
 ## Basic structure of sbt 
 
-sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.xml that is compatible with Maven. If use sbt, you no longer need to edit pom.xml manually because sbt generates pom.xml in behalf of you.
+sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.xml that is compatible with Maven. With sbt you no longer need to edit pom.xml manually, because sbt generates pom.xml in behalf of you.
 
 - Configuration files of sbt are `(project root)/*.sbt` or `(project root)/project/*.{sbt,scala}`.
   - Global configuraion files that are shared by all of your projects can be placed in `$(HOME)/.sbt/(sbt version)/` folder.
@@ -32,13 +32,14 @@ sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.
 - sbt uses the same folder struture with Maven. Source codes are in `src/main/java` and test codes are in `src/test/java`. 
 - sbt downloads artifacts (e.g., jars and source-jars, etc.) into `$(HOME)/.ivy2/` folder. 
 - sbt produces outputs (e.g., class files, jar archives, etc.) into `target` folder as in Maven.
+- Configuring build process can be done by editing predefined settings keys. 
 
 
 ## build.sbt file
 `*.sbt` is a simple script that describes project configuration settings line by line. In `*.sbt` file, settings must be separated by at least one blank line. 
 
 ### sbt settings Maven users need to know 
-Here is a list of the commonly used settings that is necessary for producing `pom.xml`. 
+Here is a list of the commonly used setting keys that is necessary for producing `pom.xml`. 
 
 ``` scala
 // Project name (artifact name in Maven)
@@ -200,15 +201,20 @@ See the full list of available options in <https://github.com/sbt/junit-interfac
 Here is a quick summary of the benefits in using sbt:
 
 - No more pom.xml! You don't need to write pom.xml for each module. 
-  - All of the project settings are in `build.sbt` and `project/*.scala`. 
-  - No need to worry about nested project structure like parent.pom, child.pom, ... In Maven projects, even updating versions of projects are cumbersome; you need to enter every submodule directory and update its version number. 
+  - All of the project settings can be found in `*.sbt` and `project/*.scala`. 
+  - No need to worry about nested project structure like parent.pom, child.pom, ... 
+    - In Maven projects, even updating versions of projects are cumbersome; you need to enter every submodule directory and update its version number. 
   - In sbt, it is quite easy to share the version number and the other settings between modules.
 - You can develop you code as you test
   - `~test` enables quick development and testing cycle.
-- [IntelliJ IDEA](http://www.jetbrains.com/idea/) already supports sbt projects. You only need to install Scala plugin.
+- [IntelliJ IDEA](http://www.jetbrains.com/idea/) already supports sbt projects. 
+  - You only need to install Scala plugin to IntelliJ.
   - For Eclpise users, use [sbt-eclipse](https://github.com/typesafehub/sbteclipse) plugin.
-- Customizing build process is easy compared to writing Maven plugins. For example, [sbt-pack](https://github.com/xerial/sbt-pack) plugin is [less than 400 lines of code](https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala).
-- In addition, you can write test codes using concise syntax of Scala by using [ScalaTest](http://www.scalatest.org/) or [Specs2](http://etorreborre.github.io/specs2/). For example, you can use [natural language-like matchers](http://www.scalatest.org/user_guide/using_matchers) for assertions and [property-based testing](http://www.scalatest.org/user_guide/property_based_testing) to produce random test cases within a specified value range.
+- Customizing build process is easy compared to writing Maven plugins. 
+  - For example, [sbt-pack](https://github.com/xerial/sbt-pack) plugin is [less than 400 lines of code](https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala).
+- In addition, you can write test codes using concise syntax of Scala by using [ScalaTest](http://www.scalatest.org/) or [Specs2](http://etorreborre.github.io/specs2/). 
+  - You can use [natural language-like matchers](http://www.scalatest.org/user_guide/using_matchers) for assertions and [property-based testing](http://www.scalatest.org/user_guide/property_based_testing) to produce random test cases within a specified value range.
+  - These rich testing frameworks significantly reduce the source code size and increase the readability of the code.
 
 
 
