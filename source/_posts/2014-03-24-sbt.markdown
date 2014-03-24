@@ -1,51 +1,52 @@
 ---
 layout: post
-title: "Building Java Projects with sbt"
+title: "Building Java projects with sbt"
 date: 2014-03-24 13:09:07 +0900
 comments: true
 categories: 
 ---
 
+I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers. To simplify this build process, I have started using sbt in Treasure Data.
+
 [sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how-to configure sbt builds and its standard usage.
 
 ## Installation
 
-Use [a script for launching sbt](https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt), developed by [Paul Phillops (paulp)](https://github.com/paulp)﻿, one of the core developers of Scala.
+Use [a script for launching sbt](https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt), developed by [Paul Phillps](https://github.com/paulp)﻿, one of the core developers of Scala.
 
-- You can simply put this script to the root folder of your project and can start sbt from a command line like `./sbt`. It automatically downloads jar files that are necessary to run sbt.
+- You can simply put this script to the root folder of your project. Now you can start sbt from a command line like `./sbt`. It automatically downloads jar files that are necessary to run sbt.
 
-If you have [Homebrew](http://brew.sh/) installed in Mac OS X, you can install sbt with `brew install sbt`.
+If you have [Homebrew](http://brew.sh/) installed in Mac OS X, you can install sbt as follows:
+
+``` sh
+$ brew install sbt
+```
 
 ## Basic structure of sbt 
 
-sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) and generates pom.xml that is compatible with Maven. sbt generates pom.xml in behalf of you.
+sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.xml that is compatible with Maven. If use sbt, you no longer need to edit pom.xml manually. sbt generates pom.xml in behalf of you.
 
-- Downloaded artifacts (e.g., jars and source-jars, etc.) are stored in `$(HOME)/.ivy2/` folder.
+- sbt downloads artifacts (e.g., jars and source-jars, etc.) into `$(HOME)/.ivy2/` folder. 
 - Configuration files of sbt are placed in `(project root)/*.sbt` and `(project root)/project/*.{sbt,scala}`. 
- - See also [Build Definition in sbt](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
-
-### build.sbt file
-*.sbt is a simple script that describes configuration settings line by line. 
-
-```
-// name of the project
-name := "your-project"
-
-version := "0.1-SNAPSHOT"
-```
-In `*.sbt` file, each setting must be separated by at least one blank line. 
+  - Global configuraion files that are shared by all of your project can be placed in `$(HOME)/.sbt/(sbt version)/`
+- For details, see also [.sbt build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
+- sbt produces outputs (e.g., class files, jar archives, etc.) into `target` folder as in Maven.
 
 
-### Settings for Maven User
+## build.sbt file
+`*.sbt` is a simple script that describes configuration settings line by line. In `*.sbt` file, each setting must be separated by at least one blank line. 
 
-```
+### sbt settings Maven users need to know 
+Here is a list of the commonly used settings that is necessary for producing `pom.xml`. 
+
+``` scala
 // Project name (artifact name in Maven)
-id := "(project name)"
+name := "(project name)"
 
 // base directory of the source folder: base/src/main/java will be used
-base = file(".")
+base := file(".")
 
-// package name used in this project
+// orgnization name (e.g., the package name of the project)
 organization := "com.treasure-data"
 
 version := "1.0-SNAPSHOT"
@@ -53,28 +54,44 @@ version := "1.0-SNAPSHOT"
 // project description
 description := "Treasure Data Project"
 
-// Enables 
+// Enables publishing to maven repo
 publishMavenStyle := true
 
-// Do not append Scala versions to the generated artifact
+// Do not append Scala versions to the generated artifacts
 crossPaths := false
 
-libraryDependencies += Seq(
-   "org.apache.commons" % "commons-math3" % "3.1.1",
-   "org.fluentd" % "fluent-logger" % "0.2.10"
-)
-```
+// This forbids including Scala related libraries into the dependency
+autoScalaLibrary := false
 
-
-
-
-- project/*.scala has the full expression power of sbt. In multi-module projects, we must use project/*.scala
- 
-How to configure sbt 
-libraryDependency
-
-```
+// library dependencies. (orginization name) % (project name) % (version)
 libraryDependencies ++= Seq(
-"org.fluentd" % "fluent-logger" % "0.2.10"
+   "org.apache.commons" % "commons-math3" % "3.1.1",
+   "org.fluentd" % "fluent-logger" % "0.2.10",
+   "org.mockito" % "mockito-core" % "1.9.5" % "test"  // Test-only dependency
 )
 ```
+
+In multi-module projects, you should use `project/*.scala`, which has the full functionality of sbt:
+
+ - [.scala build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Full-Def.html)
+ - [Full configuration example](http://www.scala-sbt.org/release/docs/Examples/Full-Configuration-Example.html)
+ 
+### Using sbt
+
+sbt can be used as a command-line tool.
+
+``` sh
+$ sbt (sbt command)
+```
+
+For daily development, I recomment to use interactive shell of `sbt`:
+
+``` sh
+$ sbt 
+[info] Loading global plugins from /Users/leo/.sbt/0.13/plugins
+[info] Resolving org.fusesource.jansi#jansi;1.4 ...
+[info] Done updating.
+> 
+```
+
+#### 
