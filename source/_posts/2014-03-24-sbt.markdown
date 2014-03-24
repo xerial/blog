@@ -15,7 +15,7 @@ I have recently joined [Treasure Data](http://treasure-data.com), and found many
 
 ## Installation
 
-Use [a script for launching sbt](https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt), developed by [Paul Phillps](https://github.com/paulp)﻿, one of the core developers of Scala.
+Use [a script for launching sbt](https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt), developed by [Paul Phillps](https://github.com/paulp). He is one of the core developers of Scala.
 
 - You can simply put this script to the root folder of your project. Now you can start sbt from a command line like `./sbt`. It automatically downloads jar files that are necessary to run sbt.
 
