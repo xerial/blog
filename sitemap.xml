@@ -2,7 +2,7 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://xerial.org/blog/2014/01/13/on-writing/</loc>
-        <lastmod>2014-03-23T16:12:27+09:00</lastmod>
+        <lastmod>2014-03-24T17:02:43+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/2014/03/22/using-octopress/</loc>
@@ -10,7 +10,7 @@
     </url>
     <url>
         <loc>http://xerial.org/blog/2014/03/24/sbt/</loc>
-        <lastmod>2014-03-24T16:32:54+09:00</lastmod>
+        <lastmod>2014-03-24T17:03:02+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/about/</loc>
@@ -18,11 +18,11 @@
     </url>
     <url>
         <loc>http://xerial.org/blog/archives/</loc>
-        <lastmod>2014-03-24T16:32:54+09:00</lastmod>
+        <lastmod>2014-03-24T17:03:02+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/</loc>
-        <lastmod>2014-03-24T16:51:14+09:00</lastmod>
+        <lastmod>2014-03-24T17:03:02+09:00</lastmod>
     </url>
     <url>
         <loc>http://xerial.org/blog/robots.txt</loc>
