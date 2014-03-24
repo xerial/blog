@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-24T20:50:30+09:00</updated>
+  <updated>2014-03-24T20:52:21+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -18,7 +18,7 @@
     <link href="http://xerial.org/blog/2014/03/24/sbt/"/>
     <updated>2014-03-24T13:09:07+09:00</updated>
     <id>http://xerial.org/blog/2014/03/24/sbt</id>
-    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects that are built with <a href="http://apache.maven.org/">Maven</a>. Maven is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build processes, I have started using sbt in Treasure Data.</p>
+    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects that are built with <a href="http://apache.maven.org/">Maven</a>. Maven is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build configuration, I have started using sbt in Treasure Data.</p>
 
 <!-- more -->
 
