@@ -100,7 +100,7 @@
 <!-- more -->
 
 
-<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
+<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as <em>es-bee-tee</em>, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
 
 <h2>Installation</h2>
 
@@ -136,11 +136,11 @@
 </ul>
 
 
-<p>sbt has predefined settings keys for configuring build processes. Writing sbt scripts is modifying these setting keys.</p>
+<p>sbt has predefined settings keys for configuring build processes. You are going to configure sbt by modifying these setting keys.</p>
 
 <h2>build.sbt file</h2>
 
-<p><code>*.sbt</code> is a simple script that describes project configuration settings line by line. In <code>build.sbt</code> file, settings must be separated by at least one blank line.</p>
+<p><code>(project root)/build.sbt</code> is a simple script that describes project configuration settings line by line. In <code>build.sbt</code> file, settings must be separated by at least one blank line.</p>
 
 <h3>sbt settings Maven users need to know</h3>
 
@@ -262,7 +262,7 @@
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; compile       <span class="c"># Compile the source codes</span>
-</span><span class='line'>&gt; <span class="nb">test</span>:comipile <span class="c"># Compile the source and test codes</span>
+</span><span class='line'>&gt; <span class="nb">test</span>:compile  <span class="c"># Compile the source and test codes</span>
 </span><span class='line'>&gt; <span class="nb">test</span>          <span class="c"># Run tests</span>
 </span><span class='line'>&gt; <span class="nb">test</span>-quick    <span class="c"># Run previously failed tests only</span>
 </span><span class='line'>
@@ -304,9 +304,11 @@
 
 <p>Here, I will show you several useful sbt plugins:</p>
 
-<h3>sbt-assembly: Creating one-jar</h3>
+<h3>sbt-assembly: Creating one-jar package</h3>
 
-<p><a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> plugin do this task. Add sbt-assembly plugin setting to <code>project/plugins.sbt</code>:</p>
+<p><a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> plugin creates one-jar (fat-jar), which assembles all dependent classes into a jar file.</p>
+
+<p>To use sbt-assembly, add the plugin setting to <code>project/plugins.sbt</code>:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">&quot;com.eed3si9n&quot;</span> <span class="o">%</span> <span class="s">&quot;sbt-assembly&quot;</span> <span class="o">%</span> <span class="s">&quot;0.11.2&quot;</span><span class="o">)</span>
@@ -318,20 +320,20 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">AssemblyKeys._</span> <span class="c1">// put this at the top of the file</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">AssemblyKeys._</span>  <span class="c1">// put this at the top of the file</span>
 </span><span class='line'>
 </span><span class='line'><span class="n">assemblySettings</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p><code>assembly</code> commands generates one-jar (fat-jar) of your project that contains all of the dependent jars:</p>
+<p>Now you can use <code>assembly</code> command that generates the one-jar of your project.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; assembly    <span class="c"># produces target/(project)-assembly-(version).jar file</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>sbt-pack: Collecting dependencies into a folder</h3>
+<h3>sbt-pack: Collecting dependent jars into a folder</h3>
 
 <p>If you need to collect depedent jars into a lib folder and want to generate launch scripts of your program, use my <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> plugin.</p>
 
@@ -395,10 +397,11 @@
 <p>Here is a quick summary of the benefits in using sbt:</p>
 
 <ul>
-<li>No more pom.xml! You don&rsquo;t need to write pom.xml for each module.
+<li>No more pom.xml!
 
 <ul>
-<li>All of the project settings can be found in <code>*.sbt</code> and <code>project/*.scala</code>.</li>
+<li>You don&rsquo;t need to write pom.xml for each module.</li>
+<li>All of the project settings can be found in <code>*.sbt</code> or <code>project/*.scala</code>.</li>
 <li>No need to worry about nested project structure like parent.pom, child.pom, &hellip;
 
 <ul>
@@ -408,7 +411,7 @@
 <li>In sbt, it is quite easy to share the version number and the other settings between modules.</li>
 </ul>
 </li>
-<li>You can develop you code as you test
+<li>You can develop you code as you test.
 
 <ul>
 <li><code>~test</code> enables quick development and testing cycle.</li>
