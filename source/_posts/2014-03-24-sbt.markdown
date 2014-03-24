@@ -6,9 +6,9 @@ comments: true
 categories: 
 ---
 
-I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses script generated pom.xml to customize Maven's default behaviour. To simplify this build process, I have started using sbt in Treasure Data. 
+I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script generated pom.xml to customize Maven's default behaviour. To simplify the build process, I have started using sbt in Treasure Data. 
 
-[sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how-to configure sbt builds and its standard usage.
+[sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how to configure sbt and its standard usage.
 
 ## Installation
 
@@ -28,7 +28,7 @@ sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.
 
 - Configuration files of sbt are `(project root)/*.sbt` or `(project root)/project/*.{sbt,scala}`.
   - Global configuraion files that are shared by all of your projects can be placed in `$(HOME)/.sbt/(sbt version)/` folder.
-- For the detailed syntax of sbt scripts, see also [.sbt build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
+  - For the detailed syntax of sbt scripts, see also [.sbt build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
 - sbt uses the same folder struture with Maven. Source codes are in `src/main/java` and test codes are in `src/test/java`. 
 - sbt downloads artifacts (e.g., jars and source-jars, etc.) into `$(HOME)/.ivy2/` folder. 
 - sbt produces outputs (e.g., class files, jar archives, etc.) into `target` folder as in Maven.
@@ -138,9 +138,7 @@ Here, I will show you several useful sbt plugins:
 
 ### sbt-assembly: Creating one-jar 
 
-[sbt-assembly](https://github.com/sbt/sbt-assembly) plugin do this task.
-
-Add sbt-assembly plugin setting to `project/plugins.sbt`:
+[sbt-assembly](https://github.com/sbt/sbt-assembly) plugin do this task. Add sbt-assembly plugin setting to `project/plugins.sbt`:
 ``` scala 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.2")
 ```
