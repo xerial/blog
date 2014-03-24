@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-24T22:50:25+09:00</updated>
+  <updated>2014-03-24T22:55:22+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -23,7 +23,7 @@
 <!-- more -->
 
 
-<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as <em>es-bee-tee</em>, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
+<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as <em>es-bee-tee</em>, is a build tool for Scala projects. I found it is also useful to build pure-java projects, but Java programmers are generally not familiar with sbt and Scala. So, in this post I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
 
 <h2>Installation</h2>
 
