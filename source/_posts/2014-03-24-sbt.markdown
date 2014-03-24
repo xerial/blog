@@ -8,7 +8,10 @@ categories:
 
 I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml to customize Maven's default behaviour. To simplify this build process, I have started using sbt in Treasure Data. 
 
+<!-- more -->
+
 [sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how to configure sbt and its standard usage.
+
 
 ## Installation
 
