@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-23T17:11:54+09:00</updated>
+  <updated>2014-03-24T16:32:54+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -12,6 +12,351 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Building Java projects with sbt]]></title>
+    <link href="http://xerial.org/blog/2014/03/24/sbt/"/>
+    <updated>2014-03-24T13:09:07+09:00</updated>
+    <id>http://xerial.org/blog/2014/03/24/sbt</id>
+    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects are built with <a href="http://apache.maven.org/">Maven</a>, which is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml to customize Maven&rsquo;s default behaviour. To simplify this build process, I have started using sbt in Treasure Data.</p>
+
+<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
+
+<h2>Installation</h2>
+
+<p>Use <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt">a script for launching sbt</a>, developed by <a href="https://github.com/paulp">Paul Phillps</a>﻿, one of the core developers of Scala.</p>
+
+<ul>
+<li>You can simply put this script to the root folder of your project. Now you can start sbt from a command line like <code>./sbt</code>. It automatically downloads jar files that are necessary to run sbt.</li>
+</ul>
+
+
+<p>If you have <a href="http://brew.sh/">Homebrew</a> installed in Mac OS X, you can install sbt as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>brew install sbt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Basic structure of sbt</h2>
+
+<p>sbt internally uses <a href="https://ant.apache.org/ivy/">Apache Ivy</a> that produces pom.xml that is compatible with Maven. With sbt you no longer need to edit pom.xml manually, because sbt generates pom.xml in behalf of you.</p>
+
+<ul>
+<li>Configuration files of sbt are <code>(project root)/*.sbt</code> or <code>(project root)/project/*.{sbt,scala}</code>.
+
+<ul>
+<li>Global configuraion files that are shared by all of your projects can be placed in <code>$(HOME)/.sbt/(sbt version)/</code> folder.</li>
+<li>For the detailed syntax of sbt scripts, see also <a href="http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html">.sbt build definition</a></li>
+</ul>
+</li>
+<li>sbt uses the same folder struture with Maven. Source codes are in <code>src/main/java</code> and test codes are in <code>src/test/java</code>.</li>
+<li>sbt downloads artifacts (e.g., jars and source-jars, etc.) into <code>$(HOME)/.ivy2/</code> folder.</li>
+<li>sbt produces outputs (e.g., class files, jar archives, etc.) into <code>target</code> folder as in Maven.</li>
+<li>Configuring build process can be done by editing predefined settings keys.</li>
+</ul>
+
+
+<h2>build.sbt file</h2>
+
+<p><code>*.sbt</code> is a simple script that describes project configuration settings line by line. In <code>*.sbt</code> file, settings must be separated by at least one blank line.</p>
+
+<h3>sbt settings Maven users need to know</h3>
+
+<p>Here is a list of the commonly used setting keys that is necessary for producing <code>pom.xml</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="c1">// Project name (artifact name in Maven)</span>
+</span><span class='line'><span class="n">name</span> <span class="o">:=</span> <span class="s">&quot;(project name)&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// orgnization name (e.g., the package name of the project)</span>
+</span><span class='line'><span class="n">organization</span> <span class="o">:=</span> <span class="s">&quot;com.treasure-data&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">version</span> <span class="o">:=</span> <span class="s">&quot;1.0-SNAPSHOT&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// project description</span>
+</span><span class='line'><span class="n">description</span> <span class="o">:=</span> <span class="s">&quot;Treasure Data Project&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Enables publishing to maven repo</span>
+</span><span class='line'><span class="n">publishMavenStyle</span> <span class="o">:=</span> <span class="kc">true</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Do not append Scala versions to the generated artifacts</span>
+</span><span class='line'><span class="n">crossPaths</span> <span class="o">:=</span> <span class="kc">false</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// This forbids including Scala related libraries into the dependency</span>
+</span><span class='line'><span class="n">autoScalaLibrary</span> <span class="o">:=</span> <span class="kc">false</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// library dependencies. (orginization name) % (project name) % (version)</span>
+</span><span class='line'><span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
+</span><span class='line'>   <span class="s">&quot;org.apache.commons&quot;</span> <span class="o">%</span> <span class="s">&quot;commons-math3&quot;</span> <span class="o">%</span> <span class="s">&quot;3.1.1&quot;</span><span class="o">,</span>
+</span><span class='line'>   <span class="s">&quot;org.fluentd&quot;</span> <span class="o">%</span> <span class="s">&quot;fluent-logger&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.10&quot;</span><span class="o">,</span>
+</span><span class='line'>   <span class="s">&quot;org.mockito&quot;</span> <span class="o">%</span> <span class="s">&quot;mockito-core&quot;</span> <span class="o">%</span> <span class="s">&quot;1.9.5&quot;</span> <span class="o">%</span> <span class="s">&quot;test&quot;</span>  <span class="c1">// Test-only dependency</span>
+</span><span class='line'><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you do not want to include <code>scala-library.jar</code> (Scala&rsquo;s core library) within the generated pacakge, set <code>autoScalaLibrary</code> to false. This enables building pure-java project with sbt.</p>
+
+<p>In multi-module projects, you should use <code>project/*.scala</code>, which has the full functionality of sbt:</p>
+
+<ul>
+<li><a href="http://www.scala-sbt.org/release/docs/Getting-Started/Full-Def.html">.scala build definition</a></li>
+<li><a href="http://www.scala-sbt.org/release/docs/Examples/Full-Configuration-Example.html">Full configuration example</a></li>
+</ul>
+
+
+<h2>Using sbt</h2>
+
+<p>sbt can be used as a command-line tool.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sbt <span class="o">(</span>sbt <span class="nb">command</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For daily development, I recommend to use the interactive shell of sbt:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sbt
+</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Loading global plugins from /Users/leo/.sbt/0.13/plugins
+</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.fusesource.jansi#jansi;1.4 ...
+</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done updating.
+</span><span class='line'>&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Useful sbt commands</h3>
+
+<p>Every sbt commands can be prefixed with <code>~</code>, which means running the command again when some souce code has changed. This is one of the powerful feature in sbt; You can quickly test your code as you write.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; compile       <span class="c"># Compile the source codes</span>
+</span><span class='line'>&gt; <span class="nb">test</span>:comipile <span class="c"># Compile the source and test codes</span>
+</span><span class='line'>&gt; <span class="nb">test</span>          <span class="c"># Run tests</span>
+</span><span class='line'>&gt; <span class="nb">test</span>-quick    <span class="c"># Run previously failed tests only</span>
+</span><span class='line'>
+</span><span class='line'>&gt; ~compile      <span class="c"># Incremental compilation, triggered by source code change</span>
+</span><span class='line'>&gt; ~test:compile <span class="c"># Incremental compilation including test codes</span>
+</span><span class='line'>&gt; ~test-quick   <span class="c"># Run previously failed tests as you modify the code</span>
+</span><span class='line'><span class="c"># Run the test cases in a given test class. </span>
+</span><span class='line'><span class="c"># You can use wildcard (\*) in the class name</span>
+</span><span class='line'>&gt; ~test-only <span class="o">(</span><span class="nb">test </span>class name<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>&gt; clean         <span class="c"># Clean up the target folder</span>
+</span><span class='line'>
+</span><span class='line'>&gt; reload        <span class="c"># Reload the sbt configuration files</span>
+</span><span class='line'>
+</span><span class='line'>&gt; project <span class="o">(</span>sub project name<span class="o">)</span>   <span class="c"># Move to a sub project</span>
+</span><span class='line'>
+</span><span class='line'>&gt; package       <span class="c"># Create a package (target/(project-name).jar) including pom.xml</span>
+</span><span class='line'>
+</span><span class='line'>&gt; publishLocal  <span class="c"># Publish to local repository ~/.ivy2/local</span>
+</span><span class='line'>&gt; publishM2     <span class="c"># Publish to local maven repository ~/.m2/repository</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>See also <a href="http://www.scala-sbt.org/release/docs/Detailed-Topics/Command-Line-Reference">sbt comand-line reference</a></li>
+</ul>
+
+
+<h2>Extending sbt</h2>
+
+<p>sbt&rsquo;s functionality can be extended by using plugins:</p>
+
+<ul>
+<li><a href="http://www.scala-sbt.org/release/docs/Getting-Started/Using-Plugins.html">Using plugins</a></li>
+<li><a href="http://www.scala-sbt.org/release/docs/Community/Community-Plugins.html#available-plugins">List of available plugins</a></li>
+<li><a href="http://eed3si9n.com/30sbt_plugins_in_15min/">30 sbt plugins in 15 minutes</a> by <a href="https://twitter.com/eed3si9n">@eed3si9n</a></li>
+</ul>
+
+
+<p>Here, I will show you several useful sbt plugins:</p>
+
+<h3>sbt-assembly: Creating one-jar</h3>
+
+<p><a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> plugin do this task. Add sbt-assembly plugin setting to <code>project/plugins.sbt</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">&quot;com.eed3si9n&quot;</span> <span class="o">%</span> <span class="s">&quot;sbt-assembly&quot;</span> <span class="o">%</span> <span class="s">&quot;0.11.2&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then import assembly settings in <code>build.sbt</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">AssemblyKeys._</span> <span class="c1">// put this at the top of the file</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">assemblySettings</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>assembly</code> commands generates one-jar (fat-jar) of your project that contains all of the dependent jars:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; assembly    <span class="c"># produces target/(project)-assembly-(version).jar file</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>sbt-pack: Collecting dependencies into a folder</h3>
+
+<p>If you need to collect depedent jars into a lib folder and want to generate launch scripts of your program, use my <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> plugin.</p>
+
+<p>Add sbt-pack plugin setting to <code>project/plugins.sbt</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">&quot;org.xerial.sbt&quot;</span> <span class="o">%</span> <span class="s">&quot;sbt-pack&quot;</span> <span class="o">%</span> <span class="s">&quot;0.5.1&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Import pack settings in <code>build.sbt</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">packSettings</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// [Optional: Mappings from a program name to the corresponding Main class ]</span>
+</span><span class='line'><span class="n">packMain</span> <span class="o">:=</span> <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;hello&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;myprog.Hello&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above settings add <code>pack</code> command to sbt:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># Collect all dependent jars into target/pack folder.</span>
+</span><span class='line'>&gt; pack
+</span><span class='line'>
+</span><span class='line'><span class="c"># Create .tar.gz archive of your project </span>
+</span><span class='line'>&gt; pack-archive
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Running JUnit tests with sbt</h3>
+
+<p>You can use <a href="https://github.com/sbt/junit-interface">junit-interface plugin</a> to run JUnit tests in sbt. First, add junit interface to the library dependency.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>libraryDependencies +<span class="o">=</span> <span class="s2">&quot;com.novocode&quot;</span> % <span class="s2">&quot;junit-interface&quot;</span> % <span class="s2">&quot;0.10&quot;</span> % <span class="s2">&quot;test&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can run specific test cases matching a regular expression pattern:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># Run test cases matching a &lt;regex&gt; within the specified test class</span>
+</span><span class='line'>&gt; ~test-only <span class="o">(</span><span class="nb">test </span>class name<span class="o">)</span> -- --tests<span class="o">=</span>&lt;regex&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See the full list of available options in <a href="https://github.com/sbt/junit-interface">https://github.com/sbt/junit-interface</a>.</p>
+
+<h2>Advantages of using sbt</h2>
+
+<p>Here is a quick summary of the benefits in using sbt:</p>
+
+<ul>
+<li>No more pom.xml! You don&rsquo;t need to write pom.xml for each module.
+
+<ul>
+<li>All of the project settings can be found in <code>*.sbt</code> and <code>project/*.scala</code>.</li>
+<li>No need to worry about nested project structure like parent.pom, child.pom, &hellip;
+
+<ul>
+<li>In Maven projects, even updating versions of projects are cumbersome; you need to enter every submodule directory and update its version number.</li>
+</ul>
+</li>
+<li>In sbt, it is quite easy to share the version number and the other settings between modules.</li>
+</ul>
+</li>
+<li>You can develop you code as you test
+
+<ul>
+<li><code>~test</code> enables quick development and testing cycle.</li>
+</ul>
+</li>
+<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA</a> already supports sbt projects.
+
+<ul>
+<li>You only need to install Scala plugin to IntelliJ.</li>
+<li>For Eclpise users, use <a href="https://github.com/typesafehub/sbteclipse">sbt-eclipse</a> plugin.</li>
+</ul>
+</li>
+<li>Customizing build process is easy compared to writing Maven plugins.
+
+<ul>
+<li>For example, <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> plugin is <a href="https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala">less than 400 lines of code</a>.</li>
+</ul>
+</li>
+<li>In addition, you can write test codes using concise syntax of Scala by using <a href="http://www.scalatest.org/">ScalaTest</a> or <a href="http://etorreborre.github.io/specs2/">Specs2</a>.
+
+<ul>
+<li>You can use <a href="http://www.scalatest.org/user_guide/using_matchers">natural language-like matchers</a> for assertions and <a href="http://www.scalatest.org/user_guide/property_based_testing">property-based testing</a> to produce random test cases within a specified value range.</li>
+<li>These rich testing frameworks significantly reduce the source code size and increase the readability of the code.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Octopress]]></title>
