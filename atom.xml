@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-24T19:45:33+09:00</updated>
+  <updated>2014-03-24T20:50:30+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -18,7 +18,7 @@
     <link href="http://xerial.org/blog/2014/03/24/sbt/"/>
     <updated>2014-03-24T13:09:07+09:00</updated>
     <id>http://xerial.org/blog/2014/03/24/sbt</id>
-    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects are built with <a href="http://apache.maven.org/">Maven</a>, which is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml to customize Maven&rsquo;s default behaviour. To simplify this build process, I have started using sbt in Treasure Data.</p>
+    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects that are built with <a href="http://apache.maven.org/">Maven</a>. Maven is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build processes, I have started using sbt in Treasure Data.</p>
 
 <!-- more -->
 
@@ -30,7 +30,7 @@
 <p>Use <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt">a script for launching sbt</a>, developed by <a href="https://github.com/paulp">Paul Phillps</a>. He is one of the core developers of Scala.</p>
 
 <ul>
-<li>You can simply put this script to the root folder of your project. Now you can start sbt from a command line like <code>./sbt</code>. It automatically downloads jar files that are necessary to run sbt.</li>
+<li>You can simply put this script to the root folder of your project. Now you can start sbt from a command line with <code>./sbt</code>. It automatically downloads jar files that are necessary to run sbt.</li>
 </ul>
 
 
@@ -53,16 +53,17 @@
 <li>For the detailed syntax of sbt scripts, see also <a href="http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html">.sbt build definition</a></li>
 </ul>
 </li>
-<li>sbt uses the same folder struture with Maven. Source codes are in <code>src/main/java</code> and test codes are in <code>src/test/java</code>.</li>
+<li>sbt uses the same folder struture with Maven. Source codes are located in <code>src/main/java</code> and test codes are in <code>src/test/java</code>.</li>
 <li>sbt downloads artifacts (e.g., jars and source-jars, etc.) into <code>$(HOME)/.ivy2/</code> folder.</li>
 <li>sbt produces outputs (e.g., class files, jar archives, etc.) into <code>target</code> folder as in Maven.</li>
-<li>Configuring build process can be done by editing predefined settings keys.</li>
 </ul>
 
 
+<p>sbt has predefined settings keys for configuring build processes. Writing sbt scripts is modifying these setting keys.</p>
+
 <h2>build.sbt file</h2>
 
-<p><code>*.sbt</code> is a simple script that describes project configuration settings line by line. In <code>*.sbt</code> file, settings must be separated by at least one blank line.</p>
+<p><code>*.sbt</code> is a simple script that describes project configuration settings line by line. In <code>build.sbt</code> file, settings must be separated by at least one blank line.</p>
 
 <h3>sbt settings Maven users need to know</h3>
 
