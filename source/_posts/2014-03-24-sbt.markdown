@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 
-I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers. To simplify this build process, I have started using sbt in Treasure Data.
+I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects are built with [Maven](http://apache.maven.org/), which is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses script generated pom.xml to customize Maven's default behaviour. To simplify this build process, I have started using sbt in Treasure Data. 
 
 [sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how-to configure sbt builds and its standard usage.
 
@@ -24,17 +24,18 @@ $ brew install sbt
 
 ## Basic structure of sbt 
 
-sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.xml that is compatible with Maven. If use sbt, you no longer need to edit pom.xml manually. sbt generates pom.xml in behalf of you.
+sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) that produces pom.xml that is compatible with Maven. If use sbt, you no longer need to edit pom.xml manually because sbt generates pom.xml in behalf of you.
 
+- Configuration files of sbt are `(project root)/*.sbt` or `(project root)/project/*.{sbt,scala}`.
+  - Global configuraion files that are shared by all of your projects can be placed in `$(HOME)/.sbt/(sbt version)/` folder.
+- For the detailed syntax of sbt scripts, see also [.sbt build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
+- sbt uses the same folder struture with Maven. Source codes are in `src/main/java` and test codes are in `src/test/java`. 
 - sbt downloads artifacts (e.g., jars and source-jars, etc.) into `$(HOME)/.ivy2/` folder. 
-- Configuration files of sbt are placed in `(project root)/*.sbt` and `(project root)/project/*.{sbt,scala}`. 
-  - Global configuraion files that are shared by all of your project can be placed in `$(HOME)/.sbt/(sbt version)/`
-- For details, see also [.sbt build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
 - sbt produces outputs (e.g., class files, jar archives, etc.) into `target` folder as in Maven.
 
 
 ## build.sbt file
-`*.sbt` is a simple script that describes configuration settings line by line. In `*.sbt` file, each setting must be separated by at least one blank line. 
+`*.sbt` is a simple script that describes project configuration settings line by line. In `*.sbt` file, settings must be separated by at least one blank line. 
 
 ### sbt settings Maven users need to know 
 Here is a list of the commonly used settings that is necessary for producing `pom.xml`. 
@@ -42,9 +43,6 @@ Here is a list of the commonly used settings that is necessary for producing `po
 ``` scala
 // Project name (artifact name in Maven)
 name := "(project name)"
-
-// base directory of the source folder: base/src/main/java will be used
-base := file(".")
 
 // orgnization name (e.g., the package name of the project)
 organization := "com.treasure-data"
@@ -71,12 +69,15 @@ libraryDependencies ++= Seq(
 )
 ```
 
+If you do not want to include `scala-library.jar` (Scala's core library) within the generated pacakge, set `autoScalaLibrary` to false. This enables building pure-java project with sbt.
+
+
 In multi-module projects, you should use `project/*.scala`, which has the full functionality of sbt:
 
  - [.scala build definition](http://www.scala-sbt.org/release/docs/Getting-Started/Full-Def.html)
  - [Full configuration example](http://www.scala-sbt.org/release/docs/Examples/Full-Configuration-Example.html)
  
-### Using sbt
+## Using sbt
 
 sbt can be used as a command-line tool.
 
@@ -84,7 +85,7 @@ sbt can be used as a command-line tool.
 $ sbt (sbt command)
 ```
 
-For daily development, I recomment to use interactive shell of `sbt`:
+For daily development, I recommend to use the interactive shell of sbt:
 
 ``` sh
 $ sbt 
@@ -94,4 +95,122 @@ $ sbt
 > 
 ```
 
-#### 
+### Useful sbt commands
+Every sbt commands can be prefixed with `~`, which means running the command again when some souce code has changed. This is one of the powerful feature in sbt; You can quickly test your code as you write. 
+
+``` sh
+> compile       # Compile the source codes
+> test:comipile # Compile the source and test codes
+> test          # Run tests
+> test-quick    # Run previously failed tests only
+
+> ~compile      # Incremental compilation, triggered by source code change
+> ~test:compile # Incremental compilation including test codes
+> ~test-quick   # Run previously failed tests as you modify the code
+# Run the test cases in a given test class. 
+# You can use wildcard (\*) in the class name
+> ~test-only (test class name)  
+
+> clean         # Clean up the target folder
+
+> reload        # Reload the sbt configuration files
+
+> project (sub project name)   # Move to a sub project
+
+> package       # Create a package (target/(project-name).jar) including pom.xml
+
+> publishLocal  # Publish to local repository ~/.ivy2/local
+> publishM2     # Publish to local maven repository ~/.m2/repository
+
+```
+
+- See also [sbt comand-line reference](http://www.scala-sbt.org/release/docs/Detailed-Topics/Command-Line-Reference)
+
+## Extending sbt
+
+sbt's functionality can be extended by using plugins:
+
+ - [Using plugins](http://www.scala-sbt.org/release/docs/Getting-Started/Using-Plugins.html)
+ - [List of available plugins](http://www.scala-sbt.org/release/docs/Community/Community-Plugins.html#available-plugins)
+ - [30 sbt plugins in 15 minutes](http://eed3si9n.com/30sbt_plugins_in_15min/) by [@eed3si9n](https://twitter.com/eed3si9n)
+
+Here, I will show you several useful sbt plugins:
+
+### sbt-assembly: Creating one-jar 
+
+[sbt-assembly](https://github.com/sbt/sbt-assembly) plugin do this task.
+
+Add sbt-assembly plugin setting to `project/plugins.sbt`:
+``` scala 
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.2")
+```
+
+Then import assembly settings in `build.sbt`:
+``` scala
+import AssemblyKeys._ // put this at the top of the file
+
+assemblySettings
+```
+
+`assembly` commands generates one-jar (fat-jar) of your project that contains all of the dependent jars:
+``` sh
+> assembly    # produces target/(project)-assembly-(version).jar file
+```
+
+### sbt-pack: Collecting dependencies into a folder
+
+If you need to collect depedent jars into a lib folder and want to generate launch scripts of your program, use my [sbt-pack](https://github.com/xerial/sbt-pack) plugin. 
+
+Add sbt-pack plugin setting to `project/plugins.sbt`:
+``` scala
+addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.5.1")
+```
+
+Import pack settings in `build.sbt`:
+``` scala
+packSettings
+
+// [Optional: Mappings from a program name to the corresponding Main class ]
+packMain := Map("hello" -> "myprog.Hello")
+```
+
+The above settings add `pack` command to sbt:
+``` sh
+# Collect all dependent jars into target/pack folder.
+> pack
+
+# Create .tar.gz archive of your project 
+> pack-archive
+```
+
+### Running JUnit tests with sbt
+
+You can use [junit-interface plugin](https://github.com/sbt/junit-interface) to run JUnit tests in sbt. First, add junit interface to the library dependency.
+```
+libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test"
+```
+
+You can run specific test cases matching a regular expression pattern:
+```
+# Run test cases matching a <regex> within the specified test class
+> ~test-only (test class name) -- --tests=<regex> 
+```
+
+See the full list of available options in <https://github.com/sbt/junit-interface>.
+
+## Advantages of using sbt
+Here is a quick summary of the benefits in using sbt:
+
+- No more pom.xml! You don't need to write pom.xml for each module. 
+  - All of the project settings are in `build.sbt` and `project/*.scala`. 
+  - No need to worry about nested project structure like parent.pom, child.pom, ... In Maven projects, even updating versions of projects are cumbersome; you need to enter every submodule directory and update its version number. 
+  - In sbt, it is quite easy to share the version number and the other settings between modules.
+- You can develop you code as you test
+  - `~test` enables quick development and testing cycle.
+- [IntelliJ IDEA](http://www.jetbrains.com/idea/) already supports sbt projects. You only need to install Scala plugin.
+  - For Eclpise users, use [sbt-eclipse](https://github.com/typesafehub/sbteclipse) plugin.
+- Customizing build process is easy compared to writing Maven plugins. For example, [sbt-pack](https://github.com/xerial/sbt-pack) plugin is [less than 400 lines of code](https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala).
+- In addition, you can write test codes using concise syntax of Scala by using [ScalaTest](http://www.scalatest.org/) or [Specs2](http://etorreborre.github.io/specs2/). For example, you can use [natural language-like matchers](http://www.scalatest.org/user_guide/using_matchers) for assertions and [property-based testing](http://www.scalatest.org/user_guide/property_based_testing) to produce random test cases within a specified value range.
+
+
+
