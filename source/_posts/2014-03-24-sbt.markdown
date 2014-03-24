@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Building Java Projects with sbt"
+date: 2014-03-24 13:09:07 +0900
+comments: true
+categories: 
+---
+
+[sbt (Simple Build Tool)](http://www.scala-sbt.org), usually pronounced as es-bee-tee, is a build tool for Scala projects. I found it is also useful to build pure-java projects. In this post, I'm going to introduce the basic structure of sbt, how-to configure sbt builds and its standard usage.
+
+## Installation
+
+Use [a script for launching sbt](https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt), developed by [Paul Phillops (paulp)](https://github.com/paulp)﻿, one of the core developers of Scala.
+
+- You can simply put this script to the root folder of your project and can start sbt from a command line like `./sbt`. It automatically downloads jar files that are necessary to run sbt.
+
+If you have [Homebrew](http://brew.sh/) installed in Mac OS X, you can install sbt with `brew install sbt`.
+
+## Basic structure of sbt 
+
+sbt internally uses [Apache Ivy](https://ant.apache.org/ivy/) and generates pom.xml that is compatible with Maven. sbt generates pom.xml in behalf of you.
+
+- Downloaded artifacts (e.g., jars and source-jars, etc.) are stored in `$(HOME)/.ivy2/` folder.
+- Configuration files of sbt are placed in `(project root)/*.sbt` and `(project root)/project/*.{sbt,scala}`. 
+ - See also [Build Definition in sbt](http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html)
+
+### build.sbt file
+*.sbt is a simple script that describes configuration settings line by line. 
+
+```
+// name of the project
+name := "your-project"
+
+version := "0.1-SNAPSHOT"
+```
+In `*.sbt` file, each setting must be separated by at least one blank line. 
+
+
+### Settings for Maven User
+
+```
+// Project name (artifact name in Maven)
+id := "(project name)"
+
+// base directory of the source folder: base/src/main/java will be used
+base = file(".")
+
+// package name used in this project
+organization := "com.treasure-data"
+
+version := "1.0-SNAPSHOT"
+
+// project description
+description := "Treasure Data Project"
+
+// Enables 
+publishMavenStyle := true
+
+// Do not append Scala versions to the generated artifact
+crossPaths := false
+
+libraryDependencies += Seq(
+   "org.apache.commons" % "commons-math3" % "3.1.1",
+   "org.fluentd" % "fluent-logger" % "0.2.10"
+)
+```
+
+
+
+
+- project/*.scala has the full expression power of sbt. In multi-module projects, we must use project/*.scala
+ 
+How to configure sbt 
+libraryDependency
+
+```
+libraryDependencies ++= Seq(
+"org.fluentd" % "fluent-logger" % "0.2.10"
+)
+```
