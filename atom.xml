@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-24T17:03:02+09:00</updated>
+  <updated>2014-03-24T17:06:24+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -27,7 +27,7 @@
 
 <h2>Installation</h2>
 
-<p>Use <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt">a script for launching sbt</a>, developed by <a href="https://github.com/paulp">Paul Phillps</a>﻿, one of the core developers of Scala.</p>
+<p>Use <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt">a script for launching sbt</a>, developed by <a href="https://github.com/paulp">Paul Phillps</a>. He is one of the core developers of Scala.</p>
 
 <ul>
 <li>You can simply put this script to the root folder of your project. Now you can start sbt from a command line like <code>./sbt</code>. It automatically downloads jar files that are necessary to run sbt.</li>
