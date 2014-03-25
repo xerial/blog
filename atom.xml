@@ -4,7 +4,7 @@
   <title><![CDATA[eXerial]]></title>
   <link href="http://xerial.org/blog/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-24T23:00:55+09:00</updated>
+  <updated>2014-03-25T17:31:58+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -346,7 +346,7 @@
 
 <ul>
 <li>You only need to install Scala plugin to IntelliJ.</li>
-<li>For Eclpise users, use <a href="https://github.com/typesafehub/sbteclipse">sbt-eclipse</a> plugin.</li>
+<li>For Eclipse users, use <a href="https://github.com/typesafehub/sbteclipse">sbt-eclipse</a> plugin.</li>
 </ul>
 </li>
 <li>Customizing build process is easy compared to writing Maven plugins.
