@@ -218,7 +218,7 @@ Here is a quick summary of the benefits in using sbt:
   - `~test` enables quick development and testing cycle.
 - [IntelliJ IDEA](http://www.jetbrains.com/idea/) already supports sbt projects. 
   - You only need to install Scala plugin to IntelliJ.
-  - For Eclpise users, use [sbt-eclipse](https://github.com/typesafehub/sbteclipse) plugin.
+  - For Eclipse users, use [sbt-eclipse](https://github.com/typesafehub/sbteclipse) plugin.
 - Customizing build process is easy compared to writing Maven plugins. 
   - For example, [sbt-pack](https://github.com/xerial/sbt-pack) plugin is [less than 400 lines of code](https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala).
 - In addition, you can write test codes using concise syntax of Scala by using [ScalaTest](http://www.scalatest.org/) or [Specs2](http://etorreborre.github.io/specs2/). 
