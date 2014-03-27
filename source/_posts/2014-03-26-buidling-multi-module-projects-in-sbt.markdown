@@ -3,10 +3,10 @@ layout: post
 title: "Buidling multi-module projects in sbt"
 date: 2014-03-26 17:20:30 +0900
 comments: true
-categories: sbt
+categories: 
 ---
 
-In [the previous post]({% post_url 2014-03-24-sbt %}), I introduced how to use `sbt` for building Java projects. In response to this article my colleagues asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.
+In [the previous post]({% post_url 2014-03-24-sbt %}), I introduced how to use `sbt` for building Java projects. In response to this article my colleagues in [Treasure Data](http://treasure-data.com/) asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.
 
 Configuring multi-module projects with sbt is simple. In Maven, we need to write a parent pom.xml and 
 child pom.xml files for all of the sub modules. In sbt you only need to prepare one project file (`build.sbt` or `projecct/Build.scala`).
@@ -81,6 +81,7 @@ If you are not sure names of settings keys, use `<TAB>` completion.
 ## Building jar files
 
 Now, let's go back to the root project:
+
 ``` sh
 > project root
 [info] Set current project to root (in build file:/Users/leo/work/tmp/mproj/)
@@ -115,6 +116,7 @@ Now, let's go back to the root project:
 [info] Done packaging.
 ```
 
+
 ## Publishing to Maven Repository
 
 `publishLocal` command creates .jar, -source.jar and -javadoc.jar of your projects, then install them to your local ivy repository `$HOME/.ivy2/local`. While `publishM2` commands install them to your local Maven repository `$HOME/.m2/repository`. 
@@ -135,14 +137,13 @@ If some project actually depends on another project's code, use `dependsOn`:
 ``` scala
 lazy val core = project.settings(...).dependsOn(util)
 ```
-Now _core_ project can use classes in _util_ project and its dependent libraries. Try `publishLocal`. It creates .pom xml files.
+Now _core_ project can use classes in _util_ project and its dependent libraries. Try `publishLocal`:
 
 ``` sh
 > publishLocal
 [info] 	published core_2.10 to /Users/leo/.ivy2/local/core/core_2.10/0.1-SNAPSHOT/poms/core_2.10.pom
 ```
-
-If you look at the generated pom.xml file, the dependency to util package is properly set:
+This creates .pom xml files under the target folder of each module. Looking at the generated pom.xml file, you can confirm the dependency to _util_ package is properly set:
 
 ``` 
 <?xml version='1.0' encoding='UTF-8'?>
@@ -178,9 +179,11 @@ If you look at the generated pom.xml file, the dependency to util package is pro
 </project>
 ```
 
+If you do not want include Scala library in the dependency, set `autoScalaLibrary` to false in the project settings.
 
-## References
 
-- [Multi-project builds - Official Documentation of sbt](http://www.scala-sbt.org/release/docs/Getting-Started/Multi-Project.html)
+## Reference
+
+- [Multi-project builds - sbt official doc](http://www.scala-sbt.org/release/docs/Getting-Started/Multi-Project.html)
 
 

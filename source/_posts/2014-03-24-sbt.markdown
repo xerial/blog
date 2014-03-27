@@ -3,7 +3,7 @@ layout: post
 title: "Building Java projects with sbt"
 date: 2014-03-24 13:09:07 +0900
 comments: true
-categories: 
+categories: [sbt,Scala]
 ---
 
 I have recently joined [Treasure Data](http://treasure-data.com), and found many java projects that are built with [Maven](http://apache.maven.org/). Maven is the _de facto_ standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build configuration, I have started using sbt in Treasure Data. 

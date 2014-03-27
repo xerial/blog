@@ -3,7 +3,7 @@ layout: post
 title: "Visualizing Project Dependencies in sbt"
 date: 2014-03-27 12:50:58 +0900
 comments: true
-categories: sbt
+categories: [sbt,Scala]
 ---
 
 For pretty printing dependencies, use [sbt-dependency-graph plugin](https://github.com/jrudolph/sbt-dependency-graph). To use this plugin, add sbt plugin settings:
