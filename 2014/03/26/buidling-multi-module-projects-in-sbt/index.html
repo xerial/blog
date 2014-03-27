@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Buidling multi-module projects in sbt - Xerial Blog</title>
+  <title>Buidling multi-module projects with sbt - Xerial Blog</title>
   <meta name="author" content="Taro L. Saito">
 
   
@@ -84,7 +84,7 @@
   
   <header>
     
-      <h1 class="entry-title">Buidling Multi-module Projects in Sbt</h1>
+      <h1 class="entry-title">Buidling Multi-module Projects With Sbt</h1>
     
     
       <p class="meta">
@@ -108,6 +108,9 @@
 
 
 <div class="entry-content"><p>In <a href="/blog/2014/03/24/sbt/">the previous post</a>, I introduced how to use <code>sbt</code> for building Java projects. In response to this article my colleagues in <a href="http://treasure-data.com/">Treasure Data</a> asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.</p>
+
+<!-- more -->
+
 
 <p>Configuring multi-module projects with sbt is simple. In Maven, we need to write a parent pom.xml and
 child pom.xml files for all of the sub modules. In sbt you only need to prepare one project file (<code>build.sbt</code> or <code>projecct/Build.scala</code>).</p>
@@ -285,7 +288,7 @@ child pom.xml files for all of the sub modules. In sbt you only need to prepare 
 
 <p><code>publishLocal</code> command creates .jar, -source.jar and -javadoc.jar of your projects, then install them to your local ivy repository <code>$HOME/.ivy2/local</code>. While <code>publishM2</code> commands install them to your local Maven repository <code>$HOME/.m2/repository</code>.</p>
 
-<p>To deploy jars to a remote repositroy, use <code>publish</code> command. This is equivalent to <code>mvn deploy</code> command in Maven.</p>
+<p>To deploy jars to a remote repository, use <code>publish</code> command. This is equivalent to <code>mvn deploy</code> command in Maven.</p>
 
 <p>See also:</p>
 
@@ -309,14 +312,18 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; publishLocal
+</span><span class='line'>...
 </span><span class='line'><span class="o">[</span>info<span class="o">]</span>  published core_2.10 to /Users/leo/.ivy2/local/core/core_2.10/0.1-SNAPSHOT/poms/core_2.10.pom
+</span><span class='line'>...
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>This creates .pom xml files under the target folder of each module. Looking at the generated pom.xml file, you can confirm the dependency to <em>util</em> package is properly set:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>core_2.10.pom</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -347,41 +354,98 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
 <span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;?xml <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span> <span class="nv">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span>?&gt;
-</span><span class='line'>&lt;project xsi:schemaLocation<span class="o">=</span><span class="s2">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span> xmlns:xsi<span class="se">\</span>
-</span><span class='line'><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="nv">xmlns</span><span class="o">=</span><span class="s2">&quot;http://maven.apache.org/POM/4.0.0&quot;</span>&gt;
-</span><span class='line'>    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-</span><span class='line'>    &lt;groupId&gt;core&lt;/groupId&gt;
-</span><span class='line'>    &lt;artifactId&gt;core_2.10&lt;/artifactId&gt;
-</span><span class='line'>    &lt;packaging&gt;jar&lt;/packaging&gt;
-</span><span class='line'>    &lt;description&gt;core&lt;/description&gt;
-</span><span class='line'>    &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
-</span><span class='line'>    &lt;name&gt;core&lt;/name&gt;
-</span><span class='line'>    &lt;organization&gt;
-</span><span class='line'>        &lt;name&gt;core&lt;/name&gt;
-</span><span class='line'>    &lt;/organization&gt;
-</span><span class='line'>    &lt;dependencies&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;scala-library&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;2.10.3&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;util&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;util_2.10&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;org.fluentd&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;fluent-logger&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;0.2.10&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>    &lt;/dependencies&gt;
-</span><span class='line'>&lt;/project&gt;
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span> <span class="err">xmlns:xsi\</span>
+</span><span class='line'><span class="err">=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>core<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>core_2.10<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;description&gt;</span>core<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>core<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;organization&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>core<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/organization&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.scala-lang<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>scala-library<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>2.10.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>util<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>util_2.10<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.fluentd<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>fluent-logger<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>0.2.10<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>If you do not want include Scala library in the dependency, set <code>autoScalaLibrary</code> to false in the project settings.</p>
+<p>If you do not want include Scala library in the dependency, especially for building pure-java projects, set <code>autoScalaLibrary</code> to false in the project settings. And also to remove Scala versions appended to the artifactId, set <code>crossPaths</code> to false.</p>
+
+<p>Settings these keys simplifies your pom.xml:</p>
+
+<figure class='code'><figcaption><span>core-0.1-SNAPSHOT.pom</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span> <span class="err">xmlns:xsi\</span>
+</span><span class='line'><span class="err">=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>core<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;description&gt;</span>core<span class="nt">&lt;/description&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>core<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;organization&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>core<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/organization&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>util<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>util<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.fluentd<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>fluent-logger<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>0.2.10<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h2>Reference</h2>
 
@@ -500,7 +564,7 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
       </li>
     
       <li class="post">
-        <a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling multi-module projects in sbt</a>
+        <a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling multi-module projects with sbt</a>
       </li>
     
       <li class="post">

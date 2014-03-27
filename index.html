@@ -9,8 +9,7 @@
   <meta name="author" content="Taro L. Saito">
 
   
-  <meta name="description" content="For pretty printing dependencies, use sbt-dependency-graph plugin. To use this plugin, add sbt plugin settings: build/plugins.sbt1
-addSbtPlugin(&quot &hellip;">
+  <meta name="description" content="For pretty printing dependencies in sbt, use sbt-dependency-graph plugin. To use this plugin, add sbt plugin settings: ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -111,94 +110,14 @@ addSbtPlugin(&quot &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>For pretty printing dependencies, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:</p>
-
-<figure class='code'><figcaption><span>build/plugins.sbt</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">&quot;net.virtual-void&quot;</span> <span class="o">%</span> <span class="s">&quot;sbt-dependency-graph&quot;</span> <span class="o">%</span> <span class="s">&quot;0.7.4&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next update the settings as follows (append graphSettings to every poject):</p>
-
-<figure class='code'><figcaption><span>project/Build.scala</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">sbt._</span>
-</span><span class='line'><span class="k">import</span> <span class="nn">Keys._</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">object</span> <span class="nc">MyBuild</span> <span class="k">extends</span> <span class="nc">Build</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">private</span> <span class="k">val</span> <span class="n">commonSettings</span> <span class="k">=</span> <span class="n">net</span><span class="o">.</span><span class="n">virtualvoid</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="nc">Plugin</span><span class="o">.</span><span class="n">graphSettings</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">in</span><span class="o">(</span><span class="n">file</span><span class="o">(</span><span class="s">&quot;.&quot;</span><span class="o">))</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">aggregate</span><span class="o">(</span><span class="n">core</span><span class="o">,</span> <span class="n">util</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">core</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span>
-</span><span class='line'>        <span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;org.fluentd&quot;</span> <span class="o">%</span> <span class="s">&quot;fluent-logger&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.10&quot;</span>
-</span><span class='line'>      <span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">util</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then you can see the detailed dependency graph with <code>dependenty-tree</code> command:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; project core
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Set current project to core <span class="o">(</span>in build file:/Users/leo/work/tmp/mproj/<span class="o">)</span>
-</span><span class='line'>&gt; dependency-tree
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> core:core_2.10:0.1-SNAPSHOT <span class="o">[</span>S<span class="o">]</span>
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>   +-org.fluentd:fluent-logger:0.2.10
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>     +-org.msgpack:msgpack:0.6.7
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       +-com.googlecode.json-simple:json-simple:1.1.1
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       | +-junit:junit:4.10
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       |   +-org.hamcrest:hamcrest-core:1.1
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       |
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       +-org.javassist:javassist:3.16.1-GA
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
+  <div class="entry-content"><p>For pretty printing dependencies in sbt, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:</p>
 
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/03/27/visualizing-project-dependencies-in-sbt/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -209,7 +128,7 @@ addSbtPlugin(&quot &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling Multi-module Projects in Sbt</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling Multi-module Projects With Sbt</a></h1>
     
     
       <p class="meta">
@@ -234,288 +153,12 @@ addSbtPlugin(&quot &hellip;">
 
   <div class="entry-content"><p>In <a href="/blog/2014/03/24/sbt/">the previous post</a>, I introduced how to use <code>sbt</code> for building Java projects. In response to this article my colleagues in <a href="http://treasure-data.com/">Treasure Data</a> asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.</p>
 
-<p>Configuring multi-module projects with sbt is simple. In Maven, we need to write a parent pom.xml and
-child pom.xml files for all of the sub modules. In sbt you only need to prepare one project file (<code>build.sbt</code> or <code>projecct/Build.scala</code>).</p>
-
-<p>Suppose we have the following folder structure with a parent module (root folder) and two sub modules <em>core</em> and <em>util</em>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>project/Build.sbt
-</span><span class='line'>src
-</span><span class='line'>core/src
-</span><span class='line'>util/src
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Here is a simple multi-module project setting example. Project <em>core</em> depends on <a href="https://github.com/fluent/fluent-logger-java">fluent-logger</a> library, while project <em>util</em> has no library dependency. Projects are defined by using variables: <em>root</em>, <em>core</em> and <em>util</em>. You can use these variable names to reference projects in the build file and sbt console.</p>
-
-<figure class='code'><figcaption><span>project/Build.scala</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">sbt._</span>
-</span><span class='line'><span class="k">import</span> <span class="nn">Keys._</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">object</span> <span class="nc">MyBuild</span> <span class="k">extends</span> <span class="nc">Build</span> <span class="o">{</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="n">project</span><span class="o">.</span><span class="n">in</span><span class="o">(</span><span class="n">file</span><span class="o">(</span><span class="s">&quot;.&quot;</span><span class="o">)).</span><span class="n">aggregates</span><span class="o">(</span><span class="n">core</span><span class="o">,</span> <span class="n">util</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">core</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span>
-</span><span class='line'>          <span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;org.fluentd&quot;</span> <span class="o">%</span> <span class="s">&quot;fluent-logger&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.10&quot;</span>
-</span><span class='line'>      <span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">util</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For Scala newbies: <code>object</code> means a definition of a singleton class. <code>lazy val</code> is a variable defintion that will be evaluated when it is used for the first time.</p>
-
-<p>You can specify module directories with <code>project.in(file("..."))</code> syntax. The default directory becomes the same with the variable name. A project with the root directory <code>file(".")</code> will be the root project, which will be selected by default when lauching sbt.</p>
-
-<p>In the above example, the root project aggregates <em>util</em> and <em>core</em> projects. Enter the sbt console, and try <code>test</code> command. All test codes in three projects, including <em>root</em>, <em>util</em> and <em>core</em>, will be tested.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; <span class="nb">test</span>
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Passed: Total 0, Failed 0, Errors 0, Passed 0
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Passed: Total 0, Failed 0, Errors 0, Passed 0
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Passed: Total 0, Failed 0, Errors 0, Passed 0
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> No tests to run <span class="k">for </span>root/test:test
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> No tests to run <span class="k">for </span>util/test:test
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> No tests to run <span class="k">for </span>core/test:test
-</span><span class='line'><span class="o">[</span>success<span class="o">]</span> Total <span class="nb">time</span>: 0 s, completed 2014/03/27 11:52:12
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To run the test cases in a specific module, select a project name in sbt:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; project core
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Set current project to core <span class="o">(</span>in build file:/Users/leo/work/tmp/mproj/<span class="o">)</span>
-</span><span class='line'>&gt; <span class="nb">test</span>
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Passed: Total 0, Failed 0, Errors 0, Passed 0
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> No tests to run <span class="k">for </span>core/test:test
-</span><span class='line'><span class="o">[</span>success<span class="o">]</span> Total <span class="nb">time</span>: 0 s, completed 2014/03/27 11:53:50
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can see the project settings with <code>show</code> commands:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; show version
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> 0.1-SNAPSHOT
-</span><span class='line'>&gt; show dependencyClasspath
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> List<span class="o">(</span>Attributed<span class="o">(</span>/Users/leo/.sbt/boot/scala-2.10.3/lib/scala-library.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/org.fluentd/fluent-logger/jars/fluent-logger-0.2.10.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/org.msgpack/msgpack/bundles/msgpack-0.6.7.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/com.googlecode.json-simple/json-simple/bundles/json-simple-1.1.1.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/junit/junit/jars/junit-4.10.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar<span class="o">)</span>, Attributed<span class="o">(</span>/Users/leo/.ivy2/cache/org.javassist/javassist/jars/javassist-3.16.1-GA.jar<span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you are not sure names of settings keys, use <code>&lt;TAB&gt;</code> completion.</p>
-
-<h2>Building jar files</h2>
-
-<p>Now, let&rsquo;s go back to the root project:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; project root
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Set current project to root <span class="o">(</span>in build file:/Users/leo/work/tmp/mproj/<span class="o">)</span>
-</span><span class='line'>&gt; show version
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> core/*:version
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>  0.1-SNAPSHOT
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> util/*:version
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>  0.1-SNAPSHOT
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> root/*:version
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>  0.1-SNAPSHOT
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>package</code> command creates jar files of projects:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; package
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Updating <span class="o">{</span>file:/Users/leo/work/tmp/mproj/<span class="o">}</span>root...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Updating <span class="o">{</span>file:/Users/leo/work/tmp/mproj/<span class="o">}</span>core...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Updating <span class="o">{</span>file:/Users/leo/work/tmp/mproj/<span class="o">}</span>util...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.fusesource.jansi#jansi;1.4 ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done updating.
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.fluentd#fluent-logger;0.2.10 ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Packaging /Users/leo/work/tmp/mproj/target/scala-2.10/root_2.10-0.1-SNAPSHOT.jar ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done packaging.
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.fusesource.jansi#jansi;1.4 ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done updating.
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.scala-lang#scala-library;2.10.3 ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Packaging /Users/leo/work/tmp/mproj/core/target/scala-2.10/core_2.10-0.1-SNAPSHOT.jar ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done packaging.
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Resolving org.fusesource.jansi#jansi;1.4 ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done updating.
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Packaging /Users/leo/work/tmp/mproj/util/target/scala-2.10/util_2.10-0.1-SNAPSHOT.jar ...
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Done packaging.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Publishing to Maven Repository</h2>
-
-<p><code>publishLocal</code> command creates .jar, -source.jar and -javadoc.jar of your projects, then install them to your local ivy repository <code>$HOME/.ivy2/local</code>. While <code>publishM2</code> commands install them to your local Maven repository <code>$HOME/.m2/repository</code>.</p>
-
-<p>To deploy jars to a remote repositroy, use <code>publish</code> command. This is equivalent to <code>mvn deploy</code> command in Maven.</p>
-
-<p>See also:</p>
-
-<ul>
-<li><a href="http://www.scala-sbt.org/release/docs/Detailed-Topics/Publishing">Publishing &ndash; sbt official doc</a></li>
-<li><a href="https://github.com/xerial/sbt-sonatype">sbt-sontaype plugin</a> A sbt plugin I developed for publishing projects to the Maven central repository.</li>
-</ul>
-
-
-<h2>Project dependencies</h2>
-
-<p><code>aggregate</code> settings is just for convenience of running commands in multiple projects.
-If some project actually depends on another project&rsquo;s code, use <code>dependsOn</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">core</span> <span class="k">=</span> <span class="n">project</span><span class="o">.</span><span class="n">settings</span><span class="o">(...).</span><span class="n">dependsOn</span><span class="o">(</span><span class="n">util</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now <em>core</em> project can use classes in <em>util</em> project and its dependent libraries. Try <code>publishLocal</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; publishLocal
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>  published core_2.10 to /Users/leo/.ivy2/local/core/core_2.10/0.1-SNAPSHOT/poms/core_2.10.pom
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This creates .pom xml files under the target folder of each module. Looking at the generated pom.xml file, you can confirm the dependency to <em>util</em> package is properly set:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;?xml <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;1.0&#39;</span> <span class="nv">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span>?&gt;
-</span><span class='line'>&lt;project xsi:schemaLocation<span class="o">=</span><span class="s2">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span> xmlns:xsi<span class="se">\</span>
-</span><span class='line'><span class="o">=</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="nv">xmlns</span><span class="o">=</span><span class="s2">&quot;http://maven.apache.org/POM/4.0.0&quot;</span>&gt;
-</span><span class='line'>    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-</span><span class='line'>    &lt;groupId&gt;core&lt;/groupId&gt;
-</span><span class='line'>    &lt;artifactId&gt;core_2.10&lt;/artifactId&gt;
-</span><span class='line'>    &lt;packaging&gt;jar&lt;/packaging&gt;
-</span><span class='line'>    &lt;description&gt;core&lt;/description&gt;
-</span><span class='line'>    &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
-</span><span class='line'>    &lt;name&gt;core&lt;/name&gt;
-</span><span class='line'>    &lt;organization&gt;
-</span><span class='line'>        &lt;name&gt;core&lt;/name&gt;
-</span><span class='line'>    &lt;/organization&gt;
-</span><span class='line'>    &lt;dependencies&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;scala-library&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;2.10.3&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;util&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;util_2.10&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>        &lt;dependency&gt;
-</span><span class='line'>            &lt;groupId&gt;org.fluentd&lt;/groupId&gt;
-</span><span class='line'>            &lt;artifactId&gt;fluent-logger&lt;/artifactId&gt;
-</span><span class='line'>            &lt;version&gt;0.2.10&lt;/version&gt;
-</span><span class='line'>        &lt;/dependency&gt;
-</span><span class='line'>    &lt;/dependencies&gt;
-</span><span class='line'>&lt;/project&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you do not want include Scala library in the dependency, set <code>autoScalaLibrary</code> to false in the project settings.</p>
-
-<h2>Reference</h2>
-
-<ul>
-<li><a href="http://www.scala-sbt.org/release/docs/Getting-Started/Multi-Project.html">Multi-project builds &ndash; sbt official doc</a></li>
-</ul>
-
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -690,7 +333,7 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
       </li>
     
       <li class="post">
-        <a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling multi-module projects in sbt</a>
+        <a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling multi-module projects with sbt</a>
       </li>
     
       <li class="post">

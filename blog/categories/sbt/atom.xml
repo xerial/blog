@@ -4,7 +4,7 @@
   <title><![CDATA[Category: sbt | eXerial]]></title>
   <link href="http://xerial.org/blog/blog/categories/sbt/atom.xml" rel="self"/>
   <link href="http://xerial.org/blog/"/>
-  <updated>2014-03-27T13:23:35+09:00</updated>
+  <updated>2014-03-27T13:34:18+09:00</updated>
   <id>http://xerial.org/blog/</id>
   <author>
     <name><![CDATA[Taro L. Saito]]></name>
@@ -18,7 +18,12 @@
     <link href="http://xerial.org/blog/2014/03/27/visualizing-project-dependencies-in-sbt/"/>
     <updated>2014-03-27T12:50:58+09:00</updated>
     <id>http://xerial.org/blog/2014/03/27/visualizing-project-dependencies-in-sbt</id>
-    <content type="html"><![CDATA[<p>For pretty printing dependencies, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:
+    <content type="html"><![CDATA[<p>For pretty printing dependencies in sbt, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:</p>
+
+<!-- more -->
+
+
+<p>
 <code>scala build/plugins.sbt
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 </code></p>
