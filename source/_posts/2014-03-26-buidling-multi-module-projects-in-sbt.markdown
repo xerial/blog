@@ -1,12 +1,14 @@
 ---
 layout: post
-title: "Buidling multi-module projects in sbt"
+title: "Buidling multi-module projects with sbt"
 date: 2014-03-26 17:20:30 +0900
 comments: true
 categories: 
 ---
 
 In [the previous post]({% post_url 2014-03-24-sbt %}), I introduced how to use `sbt` for building Java projects. In response to this article my colleagues in [Treasure Data](http://treasure-data.com/) asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.
+
+<!-- more -->
 
 Configuring multi-module projects with sbt is simple. In Maven, we need to write a parent pom.xml and 
 child pom.xml files for all of the sub modules. In sbt you only need to prepare one project file (`build.sbt` or `projecct/Build.scala`).
@@ -121,7 +123,7 @@ Now, let's go back to the root project:
 
 `publishLocal` command creates .jar, -source.jar and -javadoc.jar of your projects, then install them to your local ivy repository `$HOME/.ivy2/local`. While `publishM2` commands install them to your local Maven repository `$HOME/.m2/repository`. 
 
-To deploy jars to a remote repositroy, use `publish` command. This is equivalent to `mvn deploy` command in Maven.
+To deploy jars to a remote repository, use `publish` command. This is equivalent to `mvn deploy` command in Maven.
 
 See also:
 
@@ -141,11 +143,13 @@ Now _core_ project can use classes in _util_ project and its dependent libraries
 
 ``` sh
 > publishLocal
+...
 [info] 	published core_2.10 to /Users/leo/.ivy2/local/core/core_2.10/0.1-SNAPSHOT/poms/core_2.10.pom
+...
 ```
 This creates .pom xml files under the target folder of each module. Looking at the generated pom.xml file, you can confirm the dependency to _util_ package is properly set:
 
-``` 
+``` xml core_2.10.pom
 <?xml version='1.0' encoding='UTF-8'?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi\
 ="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
@@ -179,7 +183,37 @@ This creates .pom xml files under the target folder of each module. Looking at t
 </project>
 ```
 
-If you do not want include Scala library in the dependency, set `autoScalaLibrary` to false in the project settings.
+If you do not want include Scala library in the dependency, especially for building pure-java projects, set `autoScalaLibrary` to false in the project settings. And also to remove Scala versions appended to the artifactId, set `crossPaths` to false. 
+
+Settings these keys simplifies your pom.xml:
+``` xml core-0.1-SNAPSHOT.pom
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi\
+="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>core</groupId>
+    <artifactId>core</artifactId>
+    <packaging>jar</packaging>
+    <description>core</description>
+    <version>0.1-SNAPSHOT</version>
+    <name>core</name>
+    <organization>
+        <name>core</name>
+    </organization>
+    <dependencies>
+        <dependency>
+            <groupId>util</groupId>
+            <artifactId>util</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fluentd</groupId>
+            <artifactId>fluent-logger</artifactId>
+            <version>0.2.10</version>
+        </dependency>
+    </dependencies>
+</project>
+```
 
 
 ## Reference

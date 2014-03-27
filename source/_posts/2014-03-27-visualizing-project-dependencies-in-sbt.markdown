@@ -6,7 +6,8 @@ comments: true
 categories: [sbt,Scala]
 ---
 
-For pretty printing dependencies, use [sbt-dependency-graph plugin](https://github.com/jrudolph/sbt-dependency-graph). To use this plugin, add sbt plugin settings:
+For pretty printing dependencies in sbt, use [sbt-dependency-graph plugin](https://github.com/jrudolph/sbt-dependency-graph). To use this plugin, add sbt plugin settings:
+<!-- more -->  
 ``` scala build/plugins.sbt
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
 ```
