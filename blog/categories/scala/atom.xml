@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Scala | eXerial]]></title>
+  <link href="http://xerial.org/blog/blog/categories/scala/atom.xml" rel="self"/>
+  <link href="http://xerial.org/blog/"/>
+  <updated>2014-03-27T13:23:35+09:00</updated>
+  <id>http://xerial.org/blog/</id>
+  <author>
+    <name><![CDATA[Taro L. Saito]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Visualizing Project Dependencies in sbt]]></title>
+    <link href="http://xerial.org/blog/2014/03/27/visualizing-project-dependencies-in-sbt/"/>
+    <updated>2014-03-27T12:50:58+09:00</updated>
+    <id>http://xerial.org/blog/2014/03/27/visualizing-project-dependencies-in-sbt</id>
+    <content type="html"><![CDATA[<p>For pretty printing dependencies, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:
+<code>scala build/plugins.sbt
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
+</code></p>
+
+<p>Next update the settings as follows (append graphSettings to every poject):
+``` scala project/Build.scala
+import sbt.<em>
+import Keys.</em></p>
+
+<p>object MyBuild extends Build {</p>
+
+<pre><code>private val commonSettings = net.virtualvoid.sbt.graph.Plugin.graphSettings
+
+lazy val root = project
+   .in(file("."))
+   .settings(commonSettings:_*)
+   .aggregate(core, util)
+
+lazy val core = project
+  .settings(commonSettings:_*)
+  .settings(
+    libraryDependencies += "org.fluentd" % "fluent-logger" % "0.2.10"
+  )
+
+lazy val util = project
+  .settings(commonSettings:_*)
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Then you can see the detailed dependency graph with <code>dependenty-tree</code> command:
+``` sh</p>
+
+<blockquote><p>project core
+[info] Set current project to core (in build file:/Users/leo/work/tmp/mproj/)
+dependency-tree
+[info] core:core_2.10:0.1-SNAPSHOT [S]
+[info]   +-org.fluentd:fluent-logger:0.2.10
+[info]     +-org.msgpack:msgpack:0.6.7
+[info]       +-com.googlecode.json-simple:json-simple:1.1.1
+[info]       | +-junit:junit:4.10
+[info]       |   +-org.hamcrest:hamcrest-core:1.1
+[info]       |
+[info]       +-org.javassist:javassist:3.16.1-GA
+[info]
+```</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Building Java projects with sbt]]></title>
+    <link href="http://xerial.org/blog/2014/03/24/sbt/"/>
+    <updated>2014-03-24T13:09:07+09:00</updated>
+    <id>http://xerial.org/blog/2014/03/24/sbt</id>
+    <content type="html"><![CDATA[<p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects that are built with <a href="http://apache.maven.org/">Maven</a>. Maven is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build configuration, I have started using sbt in Treasure Data.</p>
+
+<!-- more -->
+
+
+<p><a href="http://www.scala-sbt.org">sbt (Simple Build Tool)</a>, usually pronounced as <em>es-bee-tee</em>, is a build tool for Scala projects. I found it is also useful to build pure-java projects, but Java programmers are not generally familiar with sbt and Scala. So, in this post I&rsquo;m going to introduce the basic structure of sbt, how to configure sbt and its standard usage.</p>
+
+<p>If you know Scala, you can enjoy rich features of sbt for customizing build processes. For simply using sbt, however, knowledge of Scala is not necessary.</p>
+
+<h2>Installation</h2>
+
+<p>Use <a href="https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt">a script for launching sbt</a>, developed by <a href="https://github.com/paulp">Paul Phillps</a>. He is one of the core developers of Scala.</p>
+
+<ul>
+<li>You can simply put this script to the root folder of your project. Now you can start sbt from a command line with <code>./sbt</code>. It automatically downloads jar files that are necessary to run sbt.</li>
+</ul>
+
+
+<p>If you have <a href="http://brew.sh/">Homebrew</a> installed in Mac OS X, you can install sbt as follows:</p>
+
+<p><code>sh
+$ brew install sbt
+</code></p>
+
+<h2>Basic structure of sbt</h2>
+
+<p>sbt internally uses <a href="https://ant.apache.org/ivy/">Apache Ivy</a> that produces pom.xml that is compatible with Maven. With sbt you no longer need to edit pom.xml manually, because sbt generates pom.xml in behalf of you.</p>
+
+<ul>
+<li>Configuration files of sbt are <code>(project root)/*.sbt</code> or <code>(project root)/project/*.{sbt,scala}</code>.
+
+<ul>
+<li>Global configuraion files that are shared by all of your projects can be placed in <code>$(HOME)/.sbt/(sbt version)/</code> folder.</li>
+<li>For the detailed syntax of sbt scripts, see also <a href="http://www.scala-sbt.org/release/docs/Getting-Started/Basic-Def.html">.sbt build definition</a></li>
+</ul>
+</li>
+<li>sbt uses the same folder struture with Maven. Source codes are located in <code>src/main/java</code> and test codes are in <code>src/test/java</code>.</li>
+<li>sbt downloads artifacts (e.g., jars and source-jars, etc.) into <code>$(HOME)/.ivy2/</code> folder.</li>
+<li>sbt produces outputs (e.g., class files, jar archives, etc.) into <code>target</code> folder as in Maven.</li>
+</ul>
+
+
+<p>sbt has predefined settings keys for configuring build processes. You are going to configure sbt by modifying these setting keys.</p>
+
+<h2>build.sbt file</h2>
+
+<p><code>(project root)/build.sbt</code> is a simple script that describes project configuration settings line by line. In <code>build.sbt</code> file, settings must be separated by at least one blank line.</p>
+
+<h3>sbt settings Maven users need to know</h3>
+
+<p>Here is a list of the commonly used setting keys that is necessary for producing <code>pom.xml</code>.</p>
+
+<p>``` scala
+// Project name (artifact name in Maven)
+name := &ldquo;(project name)&rdquo;</p>
+
+<p>// orgnization name (e.g., the package name of the project)
+organization := &ldquo;com.treasure-data&rdquo;</p>
+
+<p>version := &ldquo;1.0-SNAPSHOT&rdquo;</p>
+
+<p>// project description
+description := &ldquo;Treasure Data Project&rdquo;</p>
+
+<p>// Enables publishing to maven repo
+publishMavenStyle := true</p>
+
+<p>// Do not append Scala versions to the generated artifacts
+crossPaths := false</p>
+
+<p>// This forbids including Scala related libraries into the dependency
+autoScalaLibrary := false</p>
+
+<p>// library dependencies. (orginization name) % (project name) % (version)
+libraryDependencies ++= Seq(
+   &ldquo;org.apache.commons&rdquo; % &ldquo;commons-math3&rdquo; % &ldquo;3.1.1&rdquo;,
+   &ldquo;org.fluentd&rdquo; % &ldquo;fluent-logger&rdquo; % &ldquo;0.2.10&rdquo;,
+   &ldquo;org.mockito&rdquo; % &ldquo;mockito-core&rdquo; % &ldquo;1.9.5&rdquo; % &ldquo;test&rdquo;  // Test-only dependency
+)
+```</p>
+
+<p>If you do not want to include <code>scala-library.jar</code> (Scala&rsquo;s core library) within the generated pacakge, set <code>autoScalaLibrary</code> to false. This enables building pure-java project with sbt.</p>
+
+<p>In multi-module projects, you should use <code>project/*.scala</code>, which has the full functionality of sbt:</p>
+
+<ul>
+<li><a href="http://www.scala-sbt.org/release/docs/Getting-Started/Full-Def.html">.scala build definition</a></li>
+<li><a href="http://www.scala-sbt.org/release/docs/Examples/Full-Configuration-Example.html">Full configuration example</a></li>
+</ul>
+
+
+<h2>Using sbt</h2>
+
+<p>sbt can be used as a command-line tool.</p>
+
+<p><code>sh
+$ sbt (sbt command)
+</code></p>
+
+<p>For daily development, I recommend to use the interactive shell of sbt:</p>
+
+<p>``` sh
+$ sbt
+[info] Loading global plugins from /Users/leo/.sbt/0.13/plugins
+[info] Resolving org.fusesource.jansi#jansi;1.4 &hellip;
+[info] Done updating.</p>
+
+<blockquote><p>```</p></blockquote>
+
+<h3>Useful sbt commands</h3>
+
+<p>Every sbt commands can be prefixed with <code>~</code>, which means running the command again when some souce code has changed. This is one of the powerful feature in sbt; You can quickly test your code as you write.</p>
+
+<p>``` sh</p>
+
+<blockquote><p>compile       # Compile the source codes
+test:compile  # Compile the source and test codes
+test          # Run tests
+test-quick    # Run previously failed tests only</p>
+
+<p>~compile      # Incremental compilation, triggered by source code change
+~test:compile # Incremental compilation including test codes
+~test-quick   # Run previously failed tests as you modify the code</p>
+
+<h1>Run the test cases in a given test class.</h1>
+
+<h1>You can use wildcard (*) in the class name</h1>
+
+<p>~test-only (test class name)</p>
+
+<p>clean         # Clean up the target folder</p>
+
+<p>reload        # Reload the sbt configuration files</p>
+
+<p>project (sub project name)   # Move to a sub project</p>
+
+<p>package       # Create a package (target/(project-name).jar) including pom.xml</p>
+
+<p>publishLocal  # Publish to local repository ~/.ivy2/local
+publishM2     # Publish to local maven repository ~/.m2/repository</p></blockquote>
+
+<p>```</p>
+
+<ul>
+<li>See also <a href="http://www.scala-sbt.org/release/docs/Detailed-Topics/Command-Line-Reference">sbt comand-line reference</a></li>
+</ul>
+
+
+<h2>Extending sbt</h2>
+
+<p>sbt&rsquo;s functionality can be extended by using plugins:</p>
+
+<ul>
+<li><a href="http://www.scala-sbt.org/release/docs/Getting-Started/Using-Plugins.html">Using plugins</a></li>
+<li><a href="http://www.scala-sbt.org/release/docs/Community/Community-Plugins.html#available-plugins">List of available plugins</a></li>
+<li><a href="http://eed3si9n.com/30sbt_plugins_in_15min/">30 sbt plugins in 15 minutes</a> by <a href="https://twitter.com/eed3si9n">@eed3si9n</a></li>
+</ul>
+
+
+<p>Here, I will show you several useful sbt plugins:</p>
+
+<h3>sbt-assembly: Creating one-jar package</h3>
+
+<p><a href="https://github.com/sbt/sbt-assembly">sbt-assembly</a> plugin creates one-jar (fat-jar), which assembles all dependent classes into a jar file.</p>
+
+<p>To use sbt-assembly, add the plugin setting to <code>project/plugins.sbt</code>:
+<code>scala
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.2")
+</code></p>
+
+<p>Then import assembly settings in <code>build.sbt</code>:
+``` scala
+import AssemblyKeys._  // put this at the top of the file</p>
+
+<p>assemblySettings
+```</p>
+
+<p>Now you can use <code>assembly</code> command that generates the one-jar of your project.
+``` sh</p>
+
+<blockquote><p>assembly    # produces target/(project)-assembly-(version).jar file
+```</p></blockquote>
+
+<h3>sbt-pack: Collecting dependent jars into a folder</h3>
+
+<p>If you need to collect depedent jars into a lib folder and want to generate launch scripts of your program, use my <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> plugin.</p>
+
+<p>Add sbt-pack plugin setting to <code>project/plugins.sbt</code>:
+<code>scala
+addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.5.1")
+</code></p>
+
+<p>Import pack settings in <code>build.sbt</code>:
+``` scala
+packSettings</p>
+
+<p>// [Optional: Mappings from a program name to the corresponding Main class ]
+packMain := Map(&ldquo;hello&rdquo; &ndash;> &ldquo;myprog.Hello&rdquo;)
+```</p>
+
+<p>The above settings add <code>pack</code> command to sbt:
+``` sh</p>
+
+<h1>Collect all dependent jars into target/pack folder.</h1>
+
+<blockquote><p>pack</p></blockquote>
+
+<h1>Create .tar.gz archive of your project</h1>
+
+<blockquote><p>pack-archive
+```</p></blockquote>
+
+<h3>Running JUnit tests with sbt</h3>
+
+<p>You can use <a href="https://github.com/sbt/junit-interface">junit-interface plugin</a> to run JUnit tests in sbt. First, add junit interface to the library dependency.
+<code>
+libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test"
+</code></p>
+
+<p>You can run specific test cases matching a regular expression pattern:
+```</p>
+
+<h1>Run test cases matching a <regex> within the specified test class</h1>
+
+<blockquote><p>~test-only (test class name) &mdash; &mdash;tests=<regex>
+```</p></blockquote>
+
+<p>See the full list of available options in <a href="https://github.com/sbt/junit-interface">https://github.com/sbt/junit-interface</a>.</p>
+
+<h2>Advantages of using sbt</h2>
+
+<p>Here is a quick summary of the benefits in using sbt:</p>
+
+<ul>
+<li>No more pom.xml!
+
+<ul>
+<li>You don&rsquo;t need to write pom.xml for each module.</li>
+<li>All of the project settings can be found in <code>*.sbt</code> or <code>project/*.scala</code>.</li>
+<li>No need to worry about nested project structure like parent.pom, child.pom, &hellip;
+
+<ul>
+<li>In Maven projects, even updating versions of projects are cumbersome; you need to enter every submodule directory and update its version number.</li>
+</ul>
+</li>
+<li>In sbt, it is quite easy to share the version number and the other settings between modules.</li>
+</ul>
+</li>
+<li>You can develop you code as you test.
+
+<ul>
+<li><code>~test</code> enables quick development and testing cycle.</li>
+</ul>
+</li>
+<li><a href="http://www.jetbrains.com/idea/">IntelliJ IDEA</a> already supports sbt projects.
+
+<ul>
+<li>You only need to install Scala plugin to IntelliJ.</li>
+<li>For Eclipse users, use <a href="https://github.com/typesafehub/sbteclipse">sbt-eclipse</a> plugin.</li>
+</ul>
+</li>
+<li>Customizing build process is easy compared to writing Maven plugins.
+
+<ul>
+<li>For example, <a href="https://github.com/xerial/sbt-pack">sbt-pack</a> plugin is <a href="https://github.com/xerial/sbt-pack/blob/develop/src/main/scala/xerial/sbt/Pack.scala">less than 400 lines of code</a>.</li>
+</ul>
+</li>
+<li>In addition, you can write test codes using concise syntax of Scala by using <a href="http://www.scalatest.org/">ScalaTest</a> or <a href="http://etorreborre.github.io/specs2/">Specs2</a>.
+
+<ul>
+<li>You can use <a href="http://www.scalatest.org/user_guide/using_matchers">natural language-like matchers</a> for assertions and <a href="http://www.scalatest.org/user_guide/property_based_testing">property-based testing</a> to produce random test cases within a specified value range.</li>
+<li>These rich testing frameworks significantly reduce the source code size and increase the readability of the code.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

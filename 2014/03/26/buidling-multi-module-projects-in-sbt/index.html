@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Xerial Blog</title>
+  <title>Buidling multi-module projects in sbt - Xerial Blog</title>
   <meta name="author" content="Taro L. Saito">
 
   
-  <meta name="description" content="For pretty printing dependencies, use sbt-dependency-graph plugin. To use this plugin, add sbt plugin settings: build/plugins.sbt1
-addSbtPlugin(&quot &hellip;">
+  <meta name="description" content="In the previous post, I introduced how to use sbt for building Java projects. In response to this article my colleagues in Treasure Data asked me on &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ addSbtPlugin(&quot &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://xerial.org/blog/">
+  <link rel="canonical" href="http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">
   <link rel="shortcut icon" href="/blog/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/blog/favicon.ico" type="image/x-icon">
   <link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -80,136 +79,12 @@ addSbtPlugin(&quot &hellip;">
 </nav> -->
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/03/27/visualizing-project-dependencies-in-sbt/">Visualizing Project Dependencies in Sbt</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-27T12:50:58+09:00" pubdate data-updated="true">Mar 27<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>For pretty printing dependencies, use <a href="https://github.com/jrudolph/sbt-dependency-graph">sbt-dependency-graph plugin</a>. To use this plugin, add sbt plugin settings:</p>
-
-<figure class='code'><figcaption><span>build/plugins.sbt</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">addSbtPlugin</span><span class="o">(</span><span class="s">&quot;net.virtual-void&quot;</span> <span class="o">%</span> <span class="s">&quot;sbt-dependency-graph&quot;</span> <span class="o">%</span> <span class="s">&quot;0.7.4&quot;</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next update the settings as follows (append graphSettings to every poject):</p>
-
-<figure class='code'><figcaption><span>project/Build.scala</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">import</span> <span class="nn">sbt._</span>
-</span><span class='line'><span class="k">import</span> <span class="nn">Keys._</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">object</span> <span class="nc">MyBuild</span> <span class="k">extends</span> <span class="nc">Build</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">private</span> <span class="k">val</span> <span class="n">commonSettings</span> <span class="k">=</span> <span class="n">net</span><span class="o">.</span><span class="n">virtualvoid</span><span class="o">.</span><span class="n">sbt</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="nc">Plugin</span><span class="o">.</span><span class="n">graphSettings</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">root</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">in</span><span class="o">(</span><span class="n">file</span><span class="o">(</span><span class="s">&quot;.&quot;</span><span class="o">))</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>       <span class="o">.</span><span class="n">aggregate</span><span class="o">(</span><span class="n">core</span><span class="o">,</span> <span class="n">util</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">core</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span>
-</span><span class='line'>        <span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;org.fluentd&quot;</span> <span class="o">%</span> <span class="s">&quot;fluent-logger&quot;</span> <span class="o">%</span> <span class="s">&quot;0.2.10&quot;</span>
-</span><span class='line'>      <span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">lazy</span> <span class="k">val</span> <span class="n">util</span> <span class="k">=</span> <span class="n">project</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">settings</span><span class="o">(</span><span class="n">commonSettings</span><span class="k">:_</span><span class="kt">*</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then you can see the detailed dependency graph with <code>dependenty-tree</code> command:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; project core
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> Set current project to core <span class="o">(</span>in build file:/Users/leo/work/tmp/mproj/<span class="o">)</span>
-</span><span class='line'>&gt; dependency-tree
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span> core:core_2.10:0.1-SNAPSHOT <span class="o">[</span>S<span class="o">]</span>
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>   +-org.fluentd:fluent-logger:0.2.10
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>     +-org.msgpack:msgpack:0.6.7
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       +-com.googlecode.json-simple:json-simple:1.1.1
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       | +-junit:junit:4.10
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       |   +-org.hamcrest:hamcrest-core:1.1
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       |
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>       +-org.javassist:javassist:3.16.1-GA
-</span><span class='line'><span class="o">[</span>info<span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/26/buidling-multi-module-projects-in-sbt/">Buidling Multi-module Projects in Sbt</a></h1>
+      <h1 class="entry-title">Buidling Multi-module Projects in Sbt</h1>
     
     
       <p class="meta">
@@ -232,7 +107,7 @@ addSbtPlugin(&quot &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>In <a href="/blog/2014/03/24/sbt/">the previous post</a>, I introduced how to use <code>sbt</code> for building Java projects. In response to this article my colleagues in <a href="http://treasure-data.com/">Treasure Data</a> asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.</p>
+<div class="entry-content"><p>In <a href="/blog/2014/03/24/sbt/">the previous post</a>, I introduced how to use <code>sbt</code> for building Java projects. In response to this article my colleagues in <a href="http://treasure-data.com/">Treasure Data</a> asked me on how to build multi-module projects with sbt. So, today I will talk about this topic.</p>
 
 <p>Configuring multi-module projects with sbt is simple. In Maven, we need to write a parent pom.xml and
 child pom.xml files for all of the sub modules. In sbt you only need to prepare one project file (<code>build.sbt</code> or <code>projecct/Build.scala</code>).</p>
@@ -515,63 +390,16 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
 </ul>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/24/sbt/">Building Java Projects With Sbt</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Taro L. Saito</span></span>
 
-<time datetime="2014-03-24T13:09:07+09:00" pubdate data-updated="true">Mar 24<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have recently joined <a href="http://treasure-data.com">Treasure Data</a>, and found many java projects that are built with <a href="http://apache.maven.org/">Maven</a>. Maven is the <em>de facto</em> standard for building Java projects. I agree Maven is useful for managing library dependencies, but as the project is becoming more and more complex, managing pom.xml turns to a headache for many developers; For example, one of the projects uses a script-generated pom.xml in order to avoid writing too many pom.xml files. To simplify such build configuration, I have started using sbt in Treasure Data.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/03/24/sbt/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/22/using-octopress/">Using Octopress</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -583,70 +411,52 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
   
 
 
-<time datetime="2014-03-22T17:08:25+09:00" pubdate data-updated="true">Mar 22<span>nd</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I have started to use Octopress for blogging:</p>
-
-<p><a href="http://octopress.org/docs/setup/">http://octopress.org/docs/setup/</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2014-03-26T17:20:30+09:00" pubdate data-updated="true">Mar 26<span>th</span>, 2014</time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2014/01/13/on-writing/">On Writing</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+      <div class="sharing">
+ <a href="http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/"
+    class="hatena-bookmark-button"
+    data-hatena-bookmark-layout="standard"
+    title="このエントリーをはてなブックマークに追加">
+    <img src="http://b.st-hatena.com/images/entry-button/button-only.gif"
+      alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a>
+  <script
+    type="text/javascript"
+    src="http://b.st-hatena.com/js/bookmark_button.js"
+    charset="utf-8" async="async"></script>
   
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/" data-via="taroleo" data-counturl="http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/" >Tweet</a>
+  
+  
+  
+  <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
 
-
-<time datetime="2014-01-13T17:08:25+09:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time>
-        
-      </p>
     
-  </header>
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/24/sbt/" title="Previous Post: Building Java projects with sbt">&laquo; Building Java projects with sbt</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/03/27/visualizing-project-dependencies-in-sbt/" title="Next Post: Visualizing Project Dependencies in sbt">Visualizing Project Dependencies in sbt &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
 
-
-  <div class="entry-content"><p>Maria Gardiner and Hugh Kearns wrote a good <a href="http://www.nature.com/naturejobs/science/articles/10.1038/nj7354-129a">article</a> that says &ldquo;Start writing before you feel ready&rdquo;. This reminds me how to write blogs, technical documents and research papers.</p>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/01/13/on-writing/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives/"> Archives </a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section id="titles">
@@ -715,6 +525,7 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -729,7 +540,10 @@ If some project actually depends on another project&rsquo;s code, use <code>depe
       var disqus_shortname = 'xerialblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/';
+        var disqus_url = 'http://xerial.org/blog/2014/03/26/buidling-multi-module-projects-in-sbt/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
